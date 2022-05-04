@@ -10,6 +10,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
 {
@@ -31,7 +32,6 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('email')
                     ->label(__('Email'))
                     ->email()
-                    ->unique()
                     ->required()
                     ->maxLength(255)
                     ->helperText(__('Email address must be unique.')),
@@ -81,5 +81,13 @@ class UserResource extends Resource
             'edit' => Pages\EditUser::route('/{record}/edit'),
             'view' => Pages\ViewUser::route('/{record}/view')
         ];
+    }
+
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['password'] = Hash::make($data['password']);
+
+        return $data;
     }
 }

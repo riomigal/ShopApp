@@ -21,7 +21,7 @@ return new class extends Migration
             $table->decimal('price');
             $table->string('image_url')->nullable();
             $table->timestamp('date_added');
-            $table->timestamp('date_updated');
+            $table->timestamp('date_updated')->nullable();
         });
     }
 
