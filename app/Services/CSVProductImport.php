@@ -30,7 +30,7 @@ class CSVProductImport
     function import(string $filename, string $disk = 'private'): void
     {
 
-        /* $header = null;
+        $header = null;
         $path = storage_path("app/$disk/" . $filename);
 
         LazyCollection::make(function () use ($path, $header) {
@@ -56,7 +56,7 @@ class CSVProductImport
                     );
                 }
                 Product::insert($products);
-            }); */
+            });
 
         Mail::to(User::pluck('email')->toArray())
 
