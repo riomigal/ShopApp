@@ -19,7 +19,9 @@ class ProductUpdates extends Mailable
      */
     public function __construct(
         protected string $title,
-        protected string $body
+        protected string $body,
+        protected $filename = null
+
     ) {
     }
 
@@ -31,7 +33,13 @@ class ProductUpdates extends Mailable
     public function build()
     {
 
-        return $this->subject(__('Product Updates ' . config('app.url')))->from(config('mail.from.address'), config('app.name'))
+        $build = $this->subject(__('Product Updates ' . config('app.url')))->from(config('mail.from.address'), config('app.name'))
             ->view('email.product-update', ['title' => $this->title, 'body' => $this->body]);
+
+        if ($this->filename) {
+            $build->attach($this->filename);
+        }
+
+        return $build;
     }
 }

@@ -62,8 +62,8 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('id')->label(__('ID'))->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('name')->label(__('Name'))->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('barcode')->label(__('Barcode'))->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('brand.name')->label(__('Brand'))->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('price')->label(__('Price'))->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('brand.name')->label(__('Brand'))->sortable(),
+                Tables\Columns\TextColumn::make('price')->label(__('Price'))->sortable(),
                 Tables\Columns\TextColumn::make('image_url')->label(__('Image'))->sortable(),
                 Tables\Columns\TextColumn::make('date_added')->label(__('Date added'))->sortable()
                     ->dateTime(),

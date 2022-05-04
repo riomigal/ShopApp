@@ -39,8 +39,9 @@ class CSVProductImport
                 if (!$header) $header = $data;
                 yield $data;
             }
+            fclose($file);
         })->skip(1)
-            ->chunk(5)
+            ->chunk(500)
             ->each(function ($data, $header) {
 
                 $products = [];
@@ -59,8 +60,9 @@ class CSVProductImport
             });
 
         Mail::to(User::pluck('email')->toArray())
-
             ->send(new ProductUpdates(__('Products Import from CSV file completed.'), __('Product have been imported from the CSV file.')));
+
+        unlink($path);
     }
 
 

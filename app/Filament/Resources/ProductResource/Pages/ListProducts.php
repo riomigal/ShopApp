@@ -3,14 +3,13 @@
 namespace App\Filament\Resources\ProductResource\Pages;
 
 use App\Filament\Resources\ProductResource;
+use App\Jobs\ExportProducts;
 use App\Jobs\ImportProducts;
 use App\Models\Brand;
-use App\Services\CSVProductImport;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Actions\ButtonAction;
 use Filament\Resources\Pages\ListRecords;
-
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,35 +51,66 @@ class ListProducts extends ListRecords
      */
     protected function getActions(): array
     {
-        return array_merge(parent::getActions(), $this->handleCSVImport());
+        return array_merge(
+            parent::getActions(),
+            [
+                $this->handleCSVImport(),
+                $this->getExportToCSVAction()
+            ]
+        );
     }
 
 
     /**
      * Returns the button to handle the CSV Import in a queue
      *
-     * @return array
+     * @return ButtonAction
      */
-    protected function handleCSVImport(): array
+    protected function handleCSVImport(): ButtonAction
     {
-        return [
+        return
             ButtonAction::make(__('Import Legacy Products'))
-                ->action(function (Collection $records, array $data): void {
-                    $filename = Storage::disk('private')->exists($data['csv_file']);
-                    if ($filename) {
+            ->action(function (Collection $records, array $data): void {
+                $filename = Storage::disk('private')->exists($data['csv_file']);
+                if ($filename) {
+                    dispatch(
+                        new ImportProducts($data['csv_file'], 'private')
+                    );
+                }
+            })
+            ->form([
+                FileUpload::make('csv_file')->rules([
+                    'required', 'mimes:csv'
+                ])->disk('private')
+                    ->helperText(__('All user will receive an email after import has fininshed'))
+
+            ])->icon('heroicon-o-upload');
+    }
 
 
+    /**
+     * Button to export csv file
+     *
+     * @return ButtonAction
+     */
+    protected function getExportToCSVAction(): ButtonAction
+    {
+        return
+            ButtonAction::make('export')
+            ->label(__('Export to CSV'))
+            ->action(fn () => $this->export())
+            ->requiresConfirmation()
+            ->color('primary')
+            ->icon('heroicon-o-download');
+    }
 
-                        dispatch(
-                            new ImportProducts($data['csv_file'], 'private')
-                        );
-                    }
-                })
-                ->form([
-                    FileUpload::make('csv_file')->rules([
-                        'required', 'mimes:csv'
-                    ])->disk('private')->helperText(__('All user will receive an email after import has fininshed'))
-                ])
-        ];
+    /**
+     * Starts export of csv file
+     *
+     * @return void
+     */
+    protected function export(): void
+    {
+        dispatch(new ExportProducts($this->tableSearchQuery, $this->tableFilters, [auth()->user()->email]));
     }
 }
