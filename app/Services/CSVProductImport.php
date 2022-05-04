@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Mail\ProductsImported;
+use App\Mail\ProductUpdates;
 use App\Models\Brand;
 use App\Models\Product;
 use App\Models\User;
@@ -30,7 +30,7 @@ class CSVProductImport
     function import(string $filename, string $disk = 'private'): void
     {
 
-        $header = null;
+        /* $header = null;
         $path = storage_path("app/$disk/" . $filename);
 
         LazyCollection::make(function () use ($path, $header) {
@@ -56,10 +56,11 @@ class CSVProductImport
                     );
                 }
                 Product::insert($products);
-            });
+            }); */
 
         Mail::to(User::pluck('email')->toArray())
-            ->send(new ProductsImported());
+
+            ->send(new ProductUpdates(__('Products Import from CSV file completed.'), __('Product have been imported from the CSV file.')));
     }
 
 

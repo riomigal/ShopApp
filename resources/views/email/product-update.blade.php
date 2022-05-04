@@ -7,7 +7,7 @@
 
 <body>
     <h1>{{ $title }}</h1>
-    <p>{{ $body }}</p>
+    <p>{!! $body !!}</p>
 
 </body>
 

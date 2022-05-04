@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Mail\ProductsImported;
+use App\Mail\ProductUpdates;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Mail;
@@ -18,6 +18,6 @@ class MailTest extends TestCase
     public function test_email()
     {
         Mail::to('saverio.migale@hotmail.com')
-            ->send(new ProductsImported);
+            ->send(new ProductUpdates('title', 'body'));
     }
 }

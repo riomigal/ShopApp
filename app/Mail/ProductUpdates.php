@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class ProductsImported extends Mailable
+class ProductUpdates extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -17,8 +17,10 @@ class ProductsImported extends Mailable
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct(
+        protected string $title,
+        protected string $body
+    ) {
     }
 
     /**
@@ -28,9 +30,8 @@ class ProductsImported extends Mailable
      */
     public function build()
     {
-        $title = __('Products Import from CSV file.');
-        $body = __('Product have been imported from the CSV file.');
-        return $this->from(config('mail.from.address'), config('app.name'))
-            ->view('notifications::email', compact('title', 'body'));
+
+        return $this->subject(__('Product Updates ' . config('app.url')))->from(config('mail.from.address'), config('app.name'))
+            ->view('email.product-update', ['title' => $this->title, 'body' => $this->body]);
     }
 }

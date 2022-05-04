@@ -2,9 +2,12 @@
 
 namespace App\Observers;
 
+use App\Mail\ProductUpdates;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class ProductObserver
@@ -20,6 +23,10 @@ class ProductObserver
      */
     public function created(Product $product)
     {
+
+        $url = route('filament.resources.products.view', ['record' => $product]);
+        Mail::to(User::pluck('email')->toArray())
+            ->send(new ProductUpdates(__('Product with id :id has been created.', ['id' => $product->id]), __('To check the new product <a href=":url">click here</a>.', ['url' => $url])));
     }
 
     /**
@@ -42,6 +49,10 @@ class ProductObserver
                 $product->save();
             }
         }
+
+        $url = route('filament.resources.products.view', ['record' => $product]);
+        Mail::to(User::pluck('email')->toArray())
+            ->send(new ProductUpdates(__('Product with id :id has been updated.', ['id' => $product->id]), __('To check the changes <a href=":url">click here</a>.', ['url' => $url])));
     }
 
 
@@ -54,6 +65,9 @@ class ProductObserver
     public function deleted(Product $product)
     {
         Storage::delete('public/' . $product->getOriginal('image_url'));
+
+        Mail::to(User::pluck('email')->toArray())
+            ->send(new ProductUpdates(__('Product with id :id has been deleted from the system. ', ['id' => $product->id]), __('Product Name: :name.', ['name' => $product->getOriginal('name')])));
     }
 
     /**
