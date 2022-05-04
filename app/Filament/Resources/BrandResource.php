@@ -11,6 +11,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Illuminate\Database\Eloquent\Model;
 
 class BrandResource extends Resource
 {
@@ -24,7 +25,7 @@ class BrandResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->unique()
+                    ->unique(ignorable: fn (?Model $record): ?Model => $record)
                     ->rules(['string'])
                     ->maxLength(255),
             ]);

@@ -4,12 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
@@ -32,15 +34,16 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('email')
                     ->label(__('Email'))
                     ->email()
+                    ->unique(ignorable: fn (?Model $record): ?Model => $record)
                     ->required()
                     ->maxLength(255)
                     ->helperText(__('Email address must be unique.')),
 
                 Forms\Components\TextInput::make('password')
                     ->password()
-                    ->required()
-                    ->minLength(8)
-                    ->maxLength(50)
+                    ->required(function (?Model $record) {
+                        return !$record;
+                    })
                     ->rules(
                         ['max:50', 'min:8']
                     )
@@ -69,7 +72,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RolesRelationManager::class
         ];
     }
 
@@ -81,13 +84,5 @@ class UserResource extends Resource
             'edit' => Pages\EditUser::route('/{record}/edit'),
             'view' => Pages\ViewUser::route('/{record}/view')
         ];
-    }
-
-
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        $data['password'] = Hash::make($data['password']);
-
-        return $data;
     }
 }
