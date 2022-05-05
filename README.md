@@ -7,58 +7,68 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## How to start 
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. Rename .env.example to .env (APP_URL to http://127.0.0.1:8000)
+2. Update the DB and MAIL variables
+3. Create a database
+4. Run:
+```
+composer install
+php artisan key:generate
+php artisan migrate
+php artisan db:seed
+php artisan storage:link
+```
+5. Run:
+```
+php artisan queue:work
+```
+6. Run in a separate terminal window:
+```
+php artisan serve
+```
+7. Open http://127.0.0.1:8000 in the browser
+8. Login as admin: 
+admin@admin.com
+aaaaaaaa
+9. Go to users and edit the admin user. Update the email address to a valid one.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Deploy app (SSH on server)
+1. Rename in .env-production to .env (Set the APP_URL to the desired domain)
+2. Follow the steps above (First approach)
+3. Follow the steps on https://laravel.com/docs/9.x/deployment
 
-## Learning Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Stack
+The app uses the TALLkit filament (https://filamentphp.com/).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Resources
+The resources (Brands, Permissions, Products, Roles and Users) do support all CRUD operation. It is also possible to extend the functionality and implement Softdeletes for each Model Class in a later step. 
 
-## Laravel Sponsors
+## Authorization
+Authorization is handled with the laravel-permission package together with policies. https://spatie.be/docs/laravel-permission/v5/introduction
+The current roles and permissions are automatically populated and assigned to the admin, when running db:seed command.
+Admins have full access on the platform, seller have only limited access to brands and products. This model serves of course only as an example and the structure can be changed as requried (E.g. creating new roles with different permissions).
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Brands
+User can create/update/view/delete new brands and assign them later products. 
 
-### Premium Partners
+## Products
+User can create/update/view/delete new products and assign brands. 
+All user receive a notification email, after a user creates / updates / deletes a product 
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### Tables
+Search (Input Search...): User can make a textsearch (id,name,barcode).
 
-## Contributing
+Filter (Filter symbol): User can filter the products by brand and price range.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Import legacy products (Button): User can import the legacy products by clicking on the button "Import legacy products" and upload a csv file. E.g. /legacy_products.csv. The header of the file have to correspond the attributes of the model. All user receive an email as soon as the import has finished.
 
-## Code of Conduct
+Export to CSV (button): User can export the filtered products by clicking on the button "Export to CSV". The file will be send the file by mail to the current authenticated user.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+The import/export and emails are sent via queue, please make sure to run php artisan queue:work to process the jobs.
 
-## Security Vulnerabilities
+P.S.: The MustVerifyEmail trait is not enabled, please make sure to insert a valid email address.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
