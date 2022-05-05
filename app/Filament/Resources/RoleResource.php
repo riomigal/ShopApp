@@ -35,7 +35,7 @@ class RoleResource extends Resource
                     ->options(function () {
                         $keys = array_keys(config('auth.guards'));
                         return array_combine($keys, $keys);
-                    })->required()
+                    })
             ]);
     }
 
@@ -43,7 +43,7 @@ class RoleResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
+                TextColumn::make('name')->sortable(),
                 TextColumn::make('guard_name'),
                 TextColumn::make('created_at')
                     ->dateTime(),

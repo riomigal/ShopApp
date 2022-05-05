@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use STS\FilamentImpersonate\Impersonate;
+
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
@@ -66,6 +68,8 @@ class UserResource extends Resource
             ])
             ->filters([
                 //
+            ])->prependActions([
+                Impersonate::make('impersonate'), // <---
             ]);
     }
 

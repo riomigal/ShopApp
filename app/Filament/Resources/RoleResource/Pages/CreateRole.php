@@ -8,4 +8,12 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateRole extends CreateRecord
 {
     protected static string $resource = RoleResource::class;
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+
+        if (!$data['guard_name']) $data['guard_name'] = 'web';
+
+        return $data;
+    }
 }

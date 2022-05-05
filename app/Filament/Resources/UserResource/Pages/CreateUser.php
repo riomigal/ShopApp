@@ -15,6 +15,7 @@ class CreateUser extends CreateRecord
 
         $data['password'] = Hash::make($data['password']);
 
+
         return $data;
     }
 }
