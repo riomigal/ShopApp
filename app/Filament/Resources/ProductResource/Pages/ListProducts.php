@@ -21,6 +21,8 @@ class ListProducts extends ListRecords
     protected static string $resource = ProductResource::class;
 
 
+
+
     protected function getTableFilters(): array
     {
         return [
@@ -111,6 +113,7 @@ class ListProducts extends ListRecords
      */
     protected function export(): void
     {
-        dispatch(new ExportProducts($this->tableSearchQuery, $this->tableFilters, [auth()->user()->email]));
+
+        dispatch(new ExportProducts($this->getAllTableRecordKeys(), [auth()->user()->email]));
     }
 }

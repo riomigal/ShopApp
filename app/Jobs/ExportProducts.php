@@ -20,8 +20,7 @@ class ExportProducts implements ShouldQueue
      * @return void
      */
     public function __construct(
-        protected string $searchQuery,
-        protected array $filter,
+        protected array $ids,
         protected array $emails
     ) {
         //
@@ -34,6 +33,6 @@ class ExportProducts implements ShouldQueue
      */
     public function handle()
     {
-        (new CSVProductExport)->export($this->searchQuery, $this->filter, $this->emails);
+        (new CSVProductExport)->export($this->ids, $this->emails);
     }
 }
